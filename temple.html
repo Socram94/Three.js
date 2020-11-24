@@ -4,20 +4,21 @@
 		<title>three.js webgl - geometry - cube</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link type="text/css" rel="stylesheet" href="main.css">
+	
 	</head>
 	<body>
 
 		<script type="module">
 
 			import * as THREE from '../../build/three.module.js';
+			import {OrbitControls} from '../jsm/controls/OrbitControls.js';
 
 			let camera, scene, renderer;
 			const cylinde = [];
 			let mesh;
 			let ceiling;
 			let cylinder;
-			
+			let controls;
 			init();
 			animate();
 
@@ -33,7 +34,7 @@
 				//camera.position.y = 200;
 				scene = new THREE.Scene();
 				// ** Ceiling and floor ** //
-				const texture = new THREE.TextureLoader().load( 'textures/gypse.png');
+				const texture = new THREE.TextureLoader().load( '../textures/gypse.png');
 
 				const geometry = new THREE.BoxBufferGeometry( 1000, 40, 1000 );
 				const geometry_cylinde = new THREE.CylinderBufferGeometry( 50, 50, 350, 500  );
@@ -57,7 +58,7 @@
 				scene.add( ceiling );
 				// *********************** //
 				//  ** Cyliner ** //
-				const texture2 = new THREE.TextureLoader().load( 'textures/pierre_calcaire.png' );
+				const texture2 = new THREE.TextureLoader().load( '../textures/pierre_calcaire.png' );
 				const material2 = new THREE.MeshBasicMaterial( {map: texture2} );
 				for(let i = 0; i < 6 ; i++){
 					cylinde[i] = new THREE.Mesh( geometry_cylinde, material2 );
@@ -94,6 +95,13 @@
 				document.body.appendChild( renderer.domElement );
 
 				//
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.enableZoom = true;
+	
+
+				//controls.update() must be called after any manual changes to the camera's transform
+			
+				controls.update();
 
 				window.addEventListener( 'resize', onWindowResize, false );
 
@@ -119,6 +127,7 @@
 				//mesh[2].rotation.y += 0.01;
 				//cylinder.rotation.x += 0.005;
 				//cylinder.rotation.y += 0.01;
+				controls.update();
 
 				renderer.render( scene, camera );
 
