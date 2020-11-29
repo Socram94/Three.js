@@ -12,7 +12,7 @@
 
 			import * as THREE from '../../build/three.module.js';
 			import {OrbitControls} from '../jsm/controls/OrbitControls.js';
-
+			import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
 			let camera, scene, renderer;
 			const cylinde = [];
 			let mesh;
@@ -29,7 +29,7 @@
 				camera.position.z = 600;
 				camera.position.x = 100;
 				camera.position.y = 250;
-			
+				
 				//camera.position.z = 600;
 				//camera.position.y = 200;
 				scene = new THREE.Scene();
@@ -57,7 +57,7 @@
 				ceiling.position.z = -600;
 				scene.add( ceiling );
 				// *********************** //
-				//  ** Cyliner ** //
+				//  ** Cylinder ** //
 				const texture2 = new THREE.TextureLoader().load( '../textures/pierre_calcaire.png' );
 				const material2 = new THREE.MeshBasicMaterial( {map: texture2} );
 				for(let i = 0; i < 6 ; i++){
@@ -65,35 +65,59 @@
 					scene.add( cylinde[i] );
 				}
 				
-				cylinde[0].position.z = -385;
+				cylinde[0].position.z = -1000;
 				cylinde[0].position.y = -5;
-				cylinde[0].position.x = -350; 
+				cylinde[0].position.x = -400; 
 
-				cylinde[1].position.z = -260;
+				cylinde[1].position.z = -650;
 				cylinde[1].position.y = -5; 
-				cylinde[1].position.x = -350; 
+				cylinde[1].position.x = -400; 
 				
-				cylinde[2].position.z = -160;
+				cylinde[2].position.z = -300;
 				cylinde[2].position.y = -5; 
-				cylinde[2].position.x = -350; 
+				cylinde[2].position.x = -400; 
 
-				cylinde[3].position.z = -385;
+				cylinde[3].position.z = -1000;
 				cylinde[3].position.y = -5;
 				cylinde[3].position.x = 350; 
 
-				cylinde[4].position.z = -260;
+				cylinde[4].position.z = -650;
 				cylinde[4].position.y = -5;
 				cylinde[4].position.x = 350; 
 
-				cylinde[5].position.z = -160;
+				cylinde[5].position.z = -300;
 				cylinde[5].position.y = -5;
 				cylinde[5].position.x = 350; 
 				// ************************* //
+
+				// 	AMBIENT LIGHT //
+
+				class ColorGUIHelper {
+					constructor(object, prop) {
+						this.object = object;
+						this.prop = prop;
+					}
+					get value() {
+						return `#${this.object[this.prop].getHexString()}`;
+					}
+					set value(hexString) {
+						this.object[this.prop].set(hexString);
+					}
+					}
+
+					const color = 0xFFFFFF;
+					const intensity = 1;
+					const light = new THREE.AmbientLight(color, intensity);
+					scene.add(light);
+
+					const gui = new GUI();
+					gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
+					gui.add(light, 'intensity', 0, 2, 0.01);
+
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
-
 				//
 				controls = new OrbitControls( camera, renderer.domElement );
 				controls.enableZoom = true;
@@ -103,7 +127,6 @@
 				//controls.update() must be called after any manual changes to the camera's transform
 			
 				controls.update();
-
 				window.addEventListener( 'resize', onWindowResize, false );
 
 			}
@@ -112,7 +135,6 @@
 
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 			}
