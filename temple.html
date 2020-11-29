@@ -17,7 +17,12 @@
 			const cylinde = [];
 			let mesh;
 			let ceiling;
+			let ceiling2;
+			let ceiling3;
+			let ceiling4;
+			let ceiling5;
 			let cylinder;
+			let cylinder_toit;
 			let controls;
 			init();
 			animate();
@@ -36,9 +41,13 @@
 				// ** Ceiling and floor ** //
 				const texture = new THREE.TextureLoader().load( '../textures/gypse.png');
 
-				const geometry = new THREE.BoxBufferGeometry( 1000, 60, 1200 );
-				const geometry_cylinde = new THREE.CylinderBufferGeometry( 70, 70, 350, 500  );
-				const geometry_ceiling = new THREE.BoxBufferGeometry( 1000, 60, 1200 );
+				const geometry = new THREE.BoxBufferGeometry( 1300, 60, 2100 );
+				const geometry_cylinde = new THREE.CylinderBufferGeometry( 70, 70, 600, 64 );
+				const geometry_ceiling = new THREE.BoxBufferGeometry( 1300, 70, 2100 );
+				const geometry_ceiling2 = new THREE.BoxBufferGeometry( 1500, 70, 2300 );
+				const geometry_ceiling3 = new THREE.BoxBufferGeometry( 1700, 70, 2500 );
+				const geometry_ceiling4 = new THREE.BoxBufferGeometry( 1900, 70, 2700 );
+				const geometry_ceiling5 = new THREE.BoxBufferGeometry( 1200, 500, 2300 );
 				const material = new THREE.MeshBasicMaterial( { map: texture } );
 
 				const geometry_plane = new THREE.PlaneBufferGeometry( 500, 200, 320 );
@@ -46,6 +55,11 @@
 				const plane = new THREE.Mesh( geometry_plane, material_plane );
 				
 				ceiling = new THREE.Mesh( geometry_ceiling, material );	
+				ceiling2 = new THREE.Mesh( geometry_ceiling2, material );	
+				ceiling3 = new THREE.Mesh( geometry_ceiling3, material );	
+				ceiling4 = new THREE.Mesh( geometry_ceiling4, material );	
+				ceiling5 = new THREE.Mesh( geometry_ceiling2, material );
+
 
 				mesh = new THREE.Mesh( geometry, material );				
 				
@@ -53,41 +67,66 @@
 				mesh.position.z = -600;
 				scene.add( mesh );
 
-				ceiling.position.y = 175;
+				ceiling.position.y = 400;
 				ceiling.position.z = -600;
 				scene.add( ceiling );
+				ceiling2.position.y = -260; //marche 2 
+				ceiling2.position.z = -600;
+				scene.add( ceiling2 );
+				ceiling3.position.y = -320;//marche 3
+				ceiling3.position.z = -600;
+				scene.add( ceiling3 );
+				ceiling4.position.y = -380;//marche 4
+				ceiling4.position.z = -600;
+				scene.add( ceiling4 );
+
+				ceiling5.position.y = 450; //étage2 
+				ceiling5.position.z = -600;
+				scene.add( ceiling5 );
 				// *********************** //
 				//  ** Cylinder ** //
 				const texture2 = new THREE.TextureLoader().load( '../textures/pierre_calcaire.png' );
 				const material2 = new THREE.MeshBasicMaterial( {map: texture2} );
-				for(let i = 0; i < 6 ; i++){
+
+				const geometry_toit = new THREE.CylinderBufferGeometry( 850, 850, 2000, 3, 1, false, 0);
+				const cylinder_toit = new THREE.Mesh( geometry_toit, material );
+				cylinder_toit.position.y = 800; //toit888888888888888888
+				cylinder_toit.position.z = -600;
+				cylinder_toit.rotation.x = -1.5708;
+				scene.add( cylinder_toit );
+
+				for(let i = 0; i < 14 ; i++){
 					cylinde[i] = new THREE.Mesh( geometry_cylinde, material2 );
 					scene.add( cylinde[i] );
 				}
 				
-				cylinde[0].position.z = -950;
-				cylinde[0].position.y = -5;
-				cylinde[0].position.x = -400; 
-
-				cylinde[1].position.z = -600;
-				cylinde[1].position.y = -5; 
-				cylinde[1].position.x = -400; 
 				
-				cylinde[2].position.z = -250;
-				cylinde[2].position.y = -5; 
-				cylinde[2].position.x = -400; 
+				for(let i = 0; i < 7; i++){
+					let positionZ = -1725;
+					cylinde[i].position.z = positionZ;
+					cylinde[i].position.y = 120;
+					cylinde[i].position.x = -400;
 
-				cylinde[3].position.z = -950;
-				cylinde[3].position.y = -5;
-				cylinde[3].position.x = 350; 
+					if(i >= 1){
+						cylinde[i].position.z = positionZ + 300 * i;
+					}
+					console.log(cylinde[i].position.z += 200);
+					console.log(i);
+				}
 
-				cylinde[4].position.z = -600;
-				cylinde[4].position.y = -5;
-				cylinde[4].position.x = 350; 
+				
+				for(let i = 7; i < 14; i++){
+					let positionZ = -3825;
+					cylinde[i].position.z = positionZ;
+					cylinde[i].position.y = 120;
+					cylinde[i].position.x = 400;
 
-				cylinde[5].position.z = -250;
-				cylinde[5].position.y = -5;
-				cylinde[5].position.x = 350; 
+					if(i >= 1){
+						cylinde[i].position.z = positionZ + 300 * i;
+					}
+					console.log(cylinde[i].position.z += 200);
+					console.log(i);
+				}
 				// ************************* //
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -126,6 +165,7 @@
 				//mesh[2].rotation.y += 0.01;
 				//cylinder.rotation.x += 0.005;
 				//cylinder.rotation.y += 0.01;
+
 				controls.update();
 
 				renderer.render( scene, camera );
