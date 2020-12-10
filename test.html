@@ -4,128 +4,174 @@
 		<title>three.js webgl - geometry - cube</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	
+
 	</head>
 	<body>
 
 		<script type="module">
 
-import * as THREE from '../../build/three.module.js';
-import {OrbitControls} from '../jsm/controls/OrbitControls.js';
-import {GUI} from 'https://threejsfundamentals.org/threejs/../3rdparty/dat.gui.module.js';
+			import * as THREE from '../../build/three.module.js';
+			import {OrbitControls} from '../jsm/controls/OrbitControls.js';
+      
+			let camera, scene, renderer;
+			const cylinde = [];
+			let mesh;
+			let ceiling;
+			let ceiling2;
+			let ceiling3;
+			let ceiling4;
+			let ceiling5;
+			let roof;
+			let controls;
+			init();
+			animate();
 
-function main() {
+			function init() {
 
-  const renderer = new THREE.WebGLRenderer({antialias: true });
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
 
-  const fov = 45;
-  const aspect = 2;  // the canvas default
-  const near = 0.1;
-  const far = 100;
-  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-  camera.position.set(0, 10, 20);
+				camera.position.z = 600;
+				camera.position.x = 100;
+				camera.position.y = 250;
 
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 5, 0);
-  controls.update();
+				//camera.position.z = 600;
+				//camera.position.y = 200;
+				scene = new THREE.Scene();
+				// ** Ceiling and floor ** //
+				const texture = new THREE.TextureLoader().load( '../textures/ardoise.jpg');
 
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color('black');
+				const geometry = new THREE.BoxBufferGeometry( 1300, 60, 2100 );
+				const geometry_cylinde = new THREE.CylinderBufferGeometry( 70, 70, 600, 64 );
+				const geometry_ceiling = new THREE.BoxBufferGeometry( 1300, 70, 2100 );
+				const geometry_ceiling2 = new THREE.BoxBufferGeometry( 1500, 70, 2300 );
+				const geometry_ceiling3 = new THREE.BoxBufferGeometry( 1700, 70, 2500 );
+				const geometry_ceiling4 = new THREE.BoxBufferGeometry( 1900, 70, 2700 );
+				const geometry_ceiling5 = new THREE.BoxBufferGeometry( 1200, 500, 2300 );
+				const material = new THREE.MeshBasicMaterial( { map: texture } );
 
-  {
-    const planeSize = 40;
+				const geometry_plane = new THREE.PlaneBufferGeometry( 500, 200, 320 );
+				const material_plane = new THREE.MeshBasicMaterial( {map: texture} );
+				const plane = new THREE.Mesh( geometry_plane, material_plane );
 
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load('../textures/gypse.png');
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.magFilter = THREE.NearestFilter;
-    const repeats = planeSize / 2;
-    texture.repeat.set(repeats, repeats);
-
-    const planeGeo = new THREE.PlaneBufferGeometry(planeSize, planeSize);
-    const planeMat = new THREE.MeshPhongMaterial({
-      map: texture,
-      side: THREE.DoubleSide,
-    });
-    const mesh = new THREE.Mesh(planeGeo, planeMat);
-    mesh.rotation.x = Math.PI * -.5;
-    scene.add(mesh);
-  }
-  {
-    const cubeSize = 4;
-    const cubeGeo = new THREE.BoxBufferGeometry(cubeSize, cubeSize, cubeSize);
-    const cubeMat = new THREE.MeshPhongMaterial({color: '#8AC'});
-    const mesh = new THREE.Mesh(cubeGeo, cubeMat);
-    mesh.position.set(cubeSize + 1, cubeSize / 2, 0);
-    scene.add(mesh);
-  }
-  {
-    const sphereRadius = 3;
-    const sphereWidthDivisions = 32;
-    const sphereHeightDivisions = 16;
-    const sphereGeo = new THREE.SphereBufferGeometry(sphereRadius, sphereWidthDivisions, sphereHeightDivisions);
-    const sphereMat = new THREE.MeshPhongMaterial({color: '#CA8'});
-    const mesh = new THREE.Mesh(sphereGeo, sphereMat);
-    mesh.position.set(-sphereRadius - 1, sphereRadius + 2, 0);
-    scene.add(mesh);
-  }
-
-  class ColorGUIHelper {
-    constructor(object, prop) {
-      this.object = object;
-      this.prop = prop;
-    }
-    get value() {
-      return `#${this.object[this.prop].getHexString()}`;
-    }
-    set value(hexString) {
-      this.object[this.prop].set(hexString);
-    }
-  }
-
-  {
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    const light = new THREE.AmbientLight(color, intensity);
-    scene.add(light);
-
-    const gui = new GUI();
-    gui.addColor(new ColorGUIHelper(light, 'color'), 'value').name('color');
-    gui.add(light, 'intensity', 0, 2, 0.01);
-  }
-
-  function resizeRendererToDisplaySize(renderer) {
-    const canvas = renderer.domElement;
-    const width = canvas.clientWidth;
-    const height = canvas.clientHeight;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    if (needResize) {
-      renderer.setSize(width, height, false);
-    }
-    return needResize;
-  }
-
-  function render() {
-
-    if (resizeRendererToDisplaySize(renderer)) {
-      const canvas = renderer.domElement;
-      camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      camera.updateProjectionMatrix();
-    }
-
-    renderer.render(scene, camera);
-
-    requestAnimationFrame(render);
-  }
-
-  requestAnimationFrame(render);
-}
-
-main();
+				ceiling = new THREE.Mesh( geometry_ceiling, material );
+				ceiling2 = new THREE.Mesh( geometry_ceiling2, material );
+				ceiling3 = new THREE.Mesh( geometry_ceiling3, material );
+				ceiling4 = new THREE.Mesh( geometry_ceiling4, material );
+				ceiling5 = new THREE.Mesh( geometry_ceiling2, material );
 
 
-</script>
+				mesh = new THREE.Mesh( geometry, material );
 
-</body>
+				mesh.position.y = -200;
+				mesh.position.z = -600;
+				scene.add( mesh );
+
+				ceiling.position.y = 400;
+				ceiling.position.z = -600;
+				scene.add( ceiling );
+				ceiling2.position.y = -260; //marche 2
+				ceiling2.position.z = -600;
+				scene.add( ceiling2 );
+				ceiling3.position.y = -320;//marche 3
+				ceiling3.position.z = -600;
+				scene.add( ceiling3 );
+				ceiling4.position.y = -380;//marche 4
+				ceiling4.position.z = -600;
+				scene.add( ceiling4 );
+
+				ceiling5.position.y = 450; //étage2
+				ceiling5.position.z = -600;
+				scene.add( ceiling5 );
+				// *********************** //
+
+				//  ** Cylinder ** //
+				const texture2 = new THREE.TextureLoader().load( '../textures/pierre_calcaire.png' );
+				const material2 = new THREE.MeshBasicMaterial( {map: texture2} );
+
+				const geometry_toit = new THREE.BoxBufferGeometry( 30, 700, 2250 );
+				const roof = new THREE.Mesh( geometry_toit, material );
+
+				roof.position.y = 600; //toit
+				roof.position.z = -600;
+				roof.position.x = -325;
+				roof.rotation.z = 90;
+				scene.add( roof );
+
+				const geometry_toit2 = new THREE.BoxBufferGeometry( 30, 700, 2250 );
+				const roof2 = new THREE.Mesh( geometry_toit2, material );
+
+				roof2.position.y = 600; //toit
+				roof2.position.z = -600;
+				roof2.position.x = 285;
+				roof2.rotation.z = -90;
+				scene.add( roof2 );
+
+				for(let i = 0; i < 14 ; i++){
+					cylinde[i] = new THREE.Mesh( geometry_cylinde, material2 );
+					scene.add( cylinde[i] );
+				}
+
+
+				for(let i = 0; i < 7; i++){
+					let positionZ = -1725;
+					cylinde[i].position.z = positionZ;
+					cylinde[i].position.y = 120;
+					cylinde[i].position.x = -400;
+
+					if(i >= 1){
+						cylinde[i].position.z = positionZ + 300 * i;
+					}
+					console.log(cylinde[i].position.z += 200);
+					console.log(i);
+				}
+
+
+				for(let i = 7; i < 14; i++){
+					let positionZ = -3825;
+					cylinde[i].position.z = positionZ;
+					cylinde[i].position.y = 120;
+					cylinde[i].position.x = 400;
+
+					if(i >= 1){
+						cylinde[i].position.z = positionZ + 300 * i;
+					}
+					console.log(cylinde[i].position.z += 200);
+					console.log(i);
+				}
+				// ************************* //
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+				//
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.enableZoom = true;
+				controls.target = new THREE.Vector3(10, 25, -600);
+				controls.update();
+
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				controls.update();
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
 </html>
