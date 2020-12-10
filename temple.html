@@ -36,7 +36,7 @@
 		const texture4 = new THREE.TextureLoader().load('../textures/graviers.jpg');
 		texture4.wrapS = THREE.RepeatWrapping;
 		texture4.wrapT = THREE.RepeatWrapping;
-		texture4.repeat.set(4, 4);
+		texture4.repeat.set(7, 7);
 		//								//
 
 		// 	MATERIALS		 //
@@ -90,6 +90,7 @@
 			for (let i = 1; i < 3; i++) {
 				roof[i] = new THREE.Mesh(geometry_toit, material);
 				roof[i].receiveShadow = true;
+				roof[i].castShadow = true;
 				scene.add(roof[i]);
 				if (i == 1) {
 					roof[i].position.y = 600; //toit
@@ -109,6 +110,8 @@
 			for (let i = 0; i < 2; i++) {
 				let geometry_ceiling = new THREE.BoxBufferGeometry(1300 - i * 100, 50, 2500 - i * 50);
 				ceiling[i] = new THREE.Mesh(geometry_ceiling, material2);
+				ceiling[i].receiveShadow = true;
+				ceiling[i].castShadow = true;
 				scene.add(ceiling[i]);
 				ceiling[i].position.y = 450 - i * 50;
 				ceiling[i].position.x = -25 - i * 50;
@@ -121,6 +124,8 @@
 		let geometry_ground = new THREE.BoxBufferGeometry(10000, 50, 10000);
 		let ground;
 		ground = new THREE.Mesh(geometry_ground, material4);
+		ground.receiveShadow = true;
+		ground.castShadow = true;
 		scene.add(ground);
 		ground.position.y = -250;
 		//									//
@@ -128,10 +133,11 @@
 			//		CRÉATION ESCALIER		//
 			function stairs() {
 				let stairs = [];
-				//const stairs_geo = new THREE.BoxBufferGeometry(1200, 50, 2300);
 				for (let i = 0; i < 3; i++) {
 					let stairs_geo = new THREE.BoxBufferGeometry(1300 - i * 100, 50, 2500 - i * 50);
 					stairs[i] = new THREE.Mesh(stairs_geo, material3);
+					stairs[i].receiveShadow = true;
+					stairs[i].castShadow = true;
 					scene.add(stairs[i]);
 				}
 
@@ -148,6 +154,8 @@
 
 			for (let i = 0; i < 14; i++) {
 				cylinde[i] = new THREE.Mesh(geometry_cylinde, material2);
+				cylinde[i].receiveShadow = true;
+				cylinde[i].castShadow = true;
 				scene.add(cylinde[i]);
 			}
 
@@ -182,6 +190,8 @@
 
 		//		FONCTION INIT			//
 		function init() {
+
+
 			//			CAMERA			//
 			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 20000);
 			camera.position.z = 600;
@@ -189,6 +199,7 @@
 			camera.position.y = 250;
 			//		CREATION SCENE 	//
 			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0x8ea9cb);
 			//	ORBIT CONTROL SETTINGS 	//
 			renderer = new THREE.WebGLRenderer({
 				antialias: true
@@ -204,9 +215,30 @@
 			window.addEventListener('resize', onWindowResize, false);
 			//											//
 
+			//		SHADOW		//
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+			//							//
+
 			//	AJOUT DES LIGHTS   //
 			const ambient = new THREE.AmbientLight(0xffffff, 0.3);
 			scene.add(ambient);
+
+			let spotlight;
+			spotlight = new THREE.SpotLight( 0xffffff, 1 );
+			spotlight.position.set( 4000, 800, 3000 );
+			spotlight.penumbra = 0.3;
+			spotlight.angle = 1;
+			spotlight.decay = 1;
+			spotlight.distance = 15000;
+			spotlight.castShadow = true;
+			spotlight.shadow.mapSize.width = 5000;
+			spotlight.shadow.mapSize.height = 5000;
+			spotlight.shadow.camera.near = 10;
+			spotlight.shadow.camera.far = 200;
+			spotlight.shadow.focus = 2;
+			spotlight.shadow.camera.far = 10000;
+			scene.add( spotlight );
 			//										//
 
 			colonne();
