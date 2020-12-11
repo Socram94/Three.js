@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>three.js webgl - geometry - cube</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body>
+	<script type="module">
+		// 			IMPORT		//
+		import * as THREE from '../../build/three.module.js';
+		import {
+			OrbitControls
+		} from '../jsm/controls/OrbitControls.js';
+		import {
+			GUI
+		} from '../jsm/libs/dat.gui.module.js';
+		import {
+			OBJLoader2
+		} from '../jsm/loaders/OBJLoader2.js';
+
+
+		//		TEXTURES		//
+		// ardoise
+		const texture = new THREE.TextureLoader().load('../textures/ardoise.jpg');
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+		texture.repeat.set(1, 1);
+		// ardoise 2
+		const texture2 = new THREE.TextureLoader().load('../textures/ardoise2.jpg');
+		texture2.wrapS = THREE.RepeatWrapping;
+		texture2.wrapT = THREE.RepeatWrapping;
+		texture2.repeat.set(1, 1);
+		// spartiates texture
+		const texture_spartiate = new THREE.TextureLoader().load('../textures/spartiate.png');
+		texture_spartiate.wrapS = THREE.RepeatWrapping;
+		texture_spartiate.wrapT = THREE.RepeatWrapping;
+		texture_spartiate.repeat.set(1, 1);
+		// rock
+		const texture3 = new THREE.TextureLoader().load('../textures/rock.jpg');
+		texture3.wrapS = THREE.RepeatWrapping;
+		texture3.wrapT = THREE.RepeatWrapping;
+		texture3.repeat.set(1, 1);
+		// Graviers
+		const texture4 = new THREE.TextureLoader().load('../textures/graviers.jpg');
+		texture4.wrapS = THREE.RepeatWrapping;
+		texture4.wrapT = THREE.RepeatWrapping;
+		texture4.repeat.set(7, 7);
+		// Calcaire
+		const texture6 = new THREE.TextureLoader().load('../textures/pierre_calcaire.png');
+		texture6.wrapS = THREE.RepeatWrapping;
+		texture6.wrapT = THREE.RepeatWrapping;
+		texture6.repeat.set(1, 1);
+
+		// 	MATERIALS		 //
+		const material = new THREE.MeshPhongMaterial({
+			map: texture,
+			dithering: true
+		});
+		const material2 = new THREE.MeshPhongMaterial({
+			map: texture2,
+			dithering: true
+		});
+		const material3 = new THREE.MeshPhongMaterial({
+			map: texture3,
+			dithering: true
+		});
+		const material4 = new THREE.MeshPhongMaterial({
+			map: texture4,
+			dithering: true
+		});
+		const material5 = new THREE.MeshPhongMaterial({
+			map: texture_spartiate,
+			dithering: true
+		});
+		const material6 = new THREE.MeshPhongMaterial({
+			map: texture6,
+			dithering: true
+		});
+
+
+		//		VARIABLES		//
+		let camera, scene, renderer;
+		const cylinde = [];
+		let mesh;
+		let controls;
+		let spotlight;
+		init();
+		buildGui();
+		buildGuiSpart();
+		animate();
+
+
+
+		//Ajout toit						//
+		function roof() {
+			let roof = [];
+			const geometry_toit = new THREE.BoxBufferGeometry(700, 30, 2300);
+
+			for (let i = 1; i < 3; i++) {
+				roof[i] = new THREE.Mesh(geometry_toit, material);
+				roof[i].receiveShadow = true;
+				roof[i].castShadow = true;
+				scene.add(roof[i]);
+				if (i == 1) {
+					roof[i].position.y = 650; //toit
+					roof[i].position.x = -296;
+					roof[i].rotation.z = Math.PI / 6;
+				} else {
+					roof[i].position.y = 650; //toit
+					roof[i].position.x = 296;
+					roof[i].rotation.z = -Math.PI / 6;
+				}
+			}
+
+			// 	CREATION DU PLAFOND		//
+			let ceiling = [];
+			for (let i = 0; i < 2; i++) {
+				let geometry_ceiling = new THREE.BoxBufferGeometry(1300 - i * 100, 50, 2500 - i * 75);
+				ceiling[i] = new THREE.Mesh(geometry_ceiling, material2);
+				ceiling[i].receiveShadow = true;
+				ceiling[i].castShadow = true;
+				scene.add(ceiling[i]);
+				ceiling[i].position.y = 450 - i * 50;
+				//	ceiling[i].position.x = -25 - i * 50;
+			}
+		}
+
+
+		//			GROUND			//
+		let geometry_ground = new THREE.BoxBufferGeometry(10000, 50, 10000);
+		let ground;
+		ground = new THREE.Mesh(geometry_ground, material4);
+		ground.receiveShadow = true;
+		ground.castShadow = true;
+		scene.add(ground);
+		ground.position.y = -250;
+
+
+		//		CRÉATION ESCALIER		//
+		function stairs() {
+			let stairs = [];
+			for (let i = 0; i < 3; i++) {
+				let stairs_geo = new THREE.BoxBufferGeometry(1300 - i * 100, 50, 2500 - i * 50);
+				stairs[i] = new THREE.Mesh(stairs_geo, material3);
+				stairs[i].receiveShadow = true;
+				stairs[i].castShadow = true;
+				scene.add(stairs[i]);
+			}
+
+			for (let i = 0; i < 3; i++) {
+				stairs[i].position.y = -200 + i * 30;
+			}
+		}
+
+
+		//	CRÉATION COLONNE	//
+		function colonne() {
+			const geometry_cylinde = new THREE.CylinderBufferGeometry(70, 70, 600, 64);
+
+			for (let i = 0; i < 14; i++) {
+				cylinde[i] = new THREE.Mesh(geometry_cylinde, material2);
+				cylinde[i].receiveShadow = true;
+				cylinde[i].castShadow = true;
+				scene.add(cylinde[i]);
+			}
+
+			for (let i = 0; i < 7; i++) { // Rangée côté 1
+				let positionZ = -900;
+				cylinde[i].position.z = positionZ;
+				cylinde[i].position.y = 120;
+				cylinde[i].position.x = -400;
+
+				if (i >= 1) {
+					cylinde[i].position.z = positionZ + 300 * i;
+				}
+				// console.log(cylinde[i].position.z += 200);
+				// console.log(i);
+			}
+
+			for (let i = 7; i < 14; i++) { // Rangée côté 2
+				let positionZ = -3000;
+				cylinde[i].position.z = positionZ;
+				cylinde[i].position.y = 120;
+				cylinde[i].position.x = 400;
+
+				if (i >= 1) {
+					cylinde[i].position.z = positionZ + 300 * i;
+				}
+				// console.log(cylinde[i].position.z += 200);
+				// console.log(i);
+			}
+		}
+
+
+		//		FONCTION LIGHTS		//
+		//	AJOUT DES LIGHTS   //
+		function light() {
+			const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+			scene.add(ambient);
+
+			spotlight = new THREE.SpotLight(0xffffff, 1);
+			spotlight.position.set(5000, 1000, 0);
+			spotlight.penumbra = 0.3;
+			spotlight.angle = 1;
+			spotlight.decay = 1;
+			spotlight.distance = 15000;
+			spotlight.castShadow = true;
+			spotlight.shadow.mapSize.width = 5000;
+			spotlight.shadow.mapSize.height = 5000;
+			spotlight.shadow.camera.near = 10;
+			spotlight.shadow.camera.far = 200;
+			spotlight.shadow.focus = 2;
+			spotlight.shadow.camera.far = 10000;
+			scene.add(spotlight);
+		}
+
+		//		FONTION CAMERA		//
+		function cam() {
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 20000);
+			camera.position.z = 600;
+			camera.position.x = 100;
+			camera.position.y = 250;
+
+		}
+
+		//		FONCTION ORBITCONTROLS		//
+		function orbit() {
+			//	ORBIT CONTROL SETTINGS 	//
+			renderer = new THREE.WebGLRenderer({
+				antialias: true
+			});
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
+
+			controls = new OrbitControls(camera, renderer.domElement);
+			controls.enableZoom = true;
+			controls.target = new THREE.Vector3(10, 25, -600);
+			controls.update();
+			window.addEventListener('resize', onWindowResize, false);
+
+
+		}
+
+		//		FONCTION INIT			//
+		function init() {
+			//			CAMERA			//
+			cam();
+			//		CREATION SCENE 	//
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color(0x8ea9cb);
+			//		ORBITCONTROLS	//
+			orbit();
+			//		SHADOW		//
+			renderer.shadowMap.enabled = true;
+			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+			light();
+			colonne();
+			roof();
+			stairs();
+		}
+
+
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		function animate() {
+			requestAnimationFrame(animate);
+			controls.update();
+			renderer.render(scene, camera);
+
+		}
+
+		//		GUI SPARTIATES		//
+		function buildGuiSpart(){
+			//		FONCTION SPARTIATES		//
+
+				const spart = new OBJLoader2();
+				spart.load('spart.obj', (spart) => {
+					spart.traverse(function(elem) {
+						if (elem.isMesh) {
+							elem.castShadow = true;
+							elem.receiveShadow = true;
+							elem.material = material;
+
+						}
+					});
+					spart.position.y = -125;
+					spart.position.z = 900;
+					let gui = new GUI;
+		const params = {
+						position2: spart.postion.z
+					};
+					console.log(position2);
+					spart.position.x = -100;
+					spart.rotation.y = Math.PI;
+					spart.scale.set(0.25, 0.25, 0.25);
+					console.log(spart);
+					scene.add(spart);
+
+
+					gui.add(params, 'position2', -900, -50).onChange(function(val) {
+						spart.position.z = val;
+					});
+
+				});
+
+
+
+				const objLoader = new OBJLoader2();
+				objLoader.load('spart.obj', (spartiate) => {
+					spartiate.traverse(function(elem) {
+						if (elem.isMesh) {
+							elem.castShadow = true;
+							elem.receiveShadow = true;
+							elem.material = material;
+						}
+					});
+					spartiate.position.y = -125;
+					spartiate.position.z = -900;
+					spartiate.position.x = 100;
+					spartiate.scale.set(0.25, 0.25, 0.25);
+					console.log(spartiate);
+					scene.add(spartiate);
+			/*		let gui = new GUI;
+					const params = {
+						position: spartiate.position.z
+					};
+
+					gui.add(params, 'position', -900, -50).onChange(function(val) {
+						spartiate.position.z = val;*/
+					});
+				});
+		}
+
+
+		//		GUI	LUMIÈRES	 	//
+		function buildGui() {
+			let gui = new GUI();
+
+			const params = {
+				'light color': spotlight.color.getHex(),
+				intensity: spotlight.intensity,
+				distance: spotlight.distance,
+				angle: spotlight.angle,
+				penumbra: spotlight.penumbra,
+				decay: spotlight.decay,
+				focus: spotlight.shadow.focus,
+				position: spotlight.position.z
+			};
+
+			gui.addColor(params, 'light color').onChange(function(val) {
+				spotlight.color.setHex(val);
+			});
+
+			gui.add(params, 'intensity', 0, 2).onChange(function(val) {
+				spotlight.intensity = val;
+			});
+
+			gui.add(params, 'distance', 5000, 30000).onChange(function(val) {
+				spotlight.distance = val;
+			});
+
+			gui.add(params, 'angle', 0, Math.PI / 3).onChange(function(val) {
+				spotlight.angle = val;
+			});
+
+			gui.add(params, 'penumbra', 0, 1).onChange(function(val) {
+				spotlight.penumbra = val;
+			});
+
+			gui.add(params, 'decay', 1, 2).onChange(function(val) {
+				spotlight.decay = val;
+			});
+
+			gui.add(params, 'focus', 0, 1).onChange(function(val) {
+				spotlight.shadow.focus = val;
+			});
+
+			gui.add(params, 'position', -5000, 5000).onChange(function(val) {
+				spotlight.position.z = val;
+			});
+
+			gui.open();
+		}
+		//							//
+	</script>
+</body>
+
+</html>
