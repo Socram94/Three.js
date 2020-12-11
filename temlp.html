@@ -293,9 +293,11 @@
 						elem.castShadow = true;
 						elem.receiveShadow = true;
 						elem.material = material;
+					
 					}
 				});
 				guiSpart(spart);
+				spart.visible = false;
 				spart.position.y = -125;
 				spart.position.z = 900;
 				spart.position.x = -100;
@@ -316,11 +318,12 @@
 				}
 			});
 			guiSpartiate(spartiate);
+			spartiate.visible = false;
 			spartiate.position.y = -125;
 			spartiate.position.z = -900;
 			spartiate.position.x = 100;
 			spartiate.scale.set(0.25, 0.25, 0.25);
-			console.log(spartiate.material);
+			console.log(spartiate);
 			scene.add(spartiate);
 
 });
@@ -330,9 +333,25 @@
 			let gui = new GUI();
 			const params = {
 				position: spartiate.position.z,
-				texture: 'ardoise'
+				texture: 'ardoise',
+				visible: false
 				
 			}
+
+			gui.add(params, 'visible').onChange(function(val){
+				if(val == true){
+					spartiate.traverse(function(){
+					spartiate.visible = true;
+				});
+				} else {
+					if(val == false){
+						spartiate.traverse(function(){
+						spartiate.visible = false;
+						});
+					}
+				}
+				
+			});
 
 			gui.add(params, 'position', -900, 0).onChange(function(val){
 				spartiate.position.z = val;
@@ -376,8 +395,23 @@
 			let gui = new GUI();
 			const params = {
 				position: spart.position.z,
-				texture: 'ardoise'
+				texture: 'ardoise',
+				visible: false
 			}
+
+			gui.add(params, 'visible').onChange(function(val){
+				if(val == true){
+					spart.traverse(function(){
+					spart.visible = true;
+				});
+				} else {
+					if(val == false){
+						spart.traverse(function(){
+						spart.visible = false;
+						});
+					}
+				}
+			});
 
 			gui.add(params, 'position', 0, 900).onChange(function(val){
 				spart.position.z = val;
