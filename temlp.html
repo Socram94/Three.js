@@ -54,7 +54,7 @@
 		texture6.wrapT = THREE.RepeatWrapping;
 		texture6.repeat.set(1, 1);
 
-		// 	MATERIALS		 //
+		// 		MATERIALS		 //
 		const material = new THREE.MeshPhongMaterial({
 			map: texture,
 			dithering: true
@@ -87,6 +87,8 @@
 		let mesh;
 		let controls;
 		let spotlight;
+
+		// 		FONCTION AFFICHAGE		//
 		init();
 		buildGui();
 		//buildGuiSpart();
@@ -211,7 +213,6 @@
 			spotlight.shadow.mapSize.width = 5000;
 			spotlight.shadow.mapSize.height = 5000;
 			spotlight.shadow.camera.near = 10;
-			spotlight.shadow.camera.far = 200;
 			spotlight.shadow.focus = 2;
 			spotlight.shadow.camera.far = 10000;
 			scene.add(spotlight);
@@ -257,10 +258,13 @@
 			//		SHADOW		//
 			renderer.shadowMap.enabled = true;
 			renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
+			//		SPARTIATE		//
 			spart();
+			//		AJOUT DES LIGHT		//
 			light();
+			//		AJOUT DES COLONNE 		//
 			colonne();
+			//		
 			roof();
 			stairs();
 		}
@@ -291,6 +295,7 @@
 						elem.material = material;
 					}
 				});
+				guiSpart(spart);
 				spart.position.y = -125;
 				spart.position.z = 900;
 				spart.position.x = -100;
@@ -310,15 +315,107 @@
 					elem.material = material;
 				}
 			});
+			guiSpartiate(spartiate);
 			spartiate.position.y = -125;
 			spartiate.position.z = -900;
 			spartiate.position.x = 100;
 			spartiate.scale.set(0.25, 0.25, 0.25);
-			console.log(spartiate);
+			console.log(spartiate.material);
 			scene.add(spartiate);
 
 });
 }
+		//		GUI	SPART 1		//
+		function guiSpartiate(spartiate){
+			let gui = new GUI();
+			const params = {
+				position: spartiate.position.z,
+				texture: 'ardoise'
+				
+			}
+
+			gui.add(params, 'position', -900, 0).onChange(function(val){
+				spartiate.position.z = val;
+			});
+
+			gui.add(params, 'texture', ['ardoise', 'ardoise2', 'pierre_calcaire', 'gravier']).onChange(function(val){
+				if(val == 'ardoise'){
+					scene.remove(spartiate);
+					spartiate.traverse(function(val2){
+					val2.material = material;
+					scene.add(spartiate);
+					});
+				}
+				if(val == 'ardoise2'){
+					scene.remove(spartiate);
+					spartiate.traverse(function(val2){
+					val2.material = material2;
+					scene.add(spartiate);
+					});	
+				}
+				if(val == 'pierre_calcaire'){
+					scene.remove(spartiate);
+					spartiate.traverse(function(val2){
+					val2.material = material6;
+					scene.add(spartiate);
+					});
+				if(val == 'gravier'){
+					scene.remove(spartiate);
+					spartiate.traverse(function(val2){
+					val2.material = material4;
+					scene.add(spartiate);
+					});
+				}
+				}
+			});
+
+		}
+		
+		//		GUI	SPART 1		//
+		function guiSpart(spart){
+			let gui = new GUI();
+			const params = {
+				position: spart.position.z,
+				texture: 'ardoise'
+			}
+
+			gui.add(params, 'position', 0, 900).onChange(function(val){
+				spart.position.z = val;
+			});
+
+			
+			gui.add(params, 'texture', ['ardoise', 'ardoise2', 'pierre_calcaire', 'gravier']).onChange(function(val){
+				if(val == 'ardoise'){
+					scene.remove(spart);
+					spart.traverse(function(val2){
+					val2.material = material;
+					scene.add(spart);
+					});
+				}
+				if(val == 'ardoise2'){
+					scene.remove(spart);
+					spart.traverse(function(val2){
+					val2.material = material2;
+					scene.add(spart);
+					});	
+				}
+				if(val == 'pierre_calcaire'){
+					scene.remove(spart);
+					spart.traverse(function(val2){
+					val2.material = material6;
+					scene.add(spart);
+					});
+				if(val == 'gravier'){
+					scene.remove(spart);
+					spart.traverse(function(val2){
+					val2.material = material4;
+					scene.add(spart);
+					});
+				}
+				}
+			});
+
+		}
 
 		//		GUI	LUMIÈRES	 	//
 		function buildGui() {
